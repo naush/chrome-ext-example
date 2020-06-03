@@ -1,5 +1,6 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
@@ -28,6 +29,12 @@ function Popup() {
       <CssBaseline />
       <Box className={classes.root}>
         <Clock />
+        <Button
+          variant="outlined"
+          onClick={() => chrome.tabs && chrome.tabs.create({ url: chrome.runtime.getURL('index.html') })}
+        >
+          Options
+        </Button>
       </Box>
     </ThemeProvider>
   );
