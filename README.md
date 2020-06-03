@@ -37,3 +37,4 @@ Creates a zip file `extension.zip` from the `build` folder.
 ## Credit
 
 - [Tomato – Flaticon](https://www.flaticon.com/free-icon/tomato_2909922)
+- [Example of playing audio in Javascript](https://gist.github.com/xem/670dec8e70815842eb95)
