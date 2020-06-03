@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "short_name": "Pomodoro",
+  "name": "Pomodoro",
+  "version": "0.0.1",
+  "description": "A stylish Pomodoro app.",
+  "icons": {
+    "16": "logo.png",
+    "128": "logo.png"
+  },
+  "options_page": "index.html",
+  "permissions": [
+    "alarms",
+    "notifications"
+  ],
+  "background": {
+    "page": "background.html",
+    "persistent": false
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "Pomodoro"
+  }
+}
