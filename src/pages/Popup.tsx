@@ -26,10 +26,25 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  links: {
-    '& button:first-child': {
-      margin: theme.spacing(0, 2, 0),
-    },
+  display: {
+    width: 300,
+    height: 300,
+  },
+  face: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: theme.spacing(10),
+  },
+  control: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: theme.spacing(0, 4),
+    width: '100%',
   },
 }));
 
@@ -80,17 +95,19 @@ function Popup() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box className={classes.root}>
-        {
-          control.status === Status.STOP && <Clock />
-        }
-        {
-          control.status === Status.PLAY && (
-            <Box>
-              {showTime()}
-            </Box>
-          )
-        }
-        <Box className={classes.links}>
+        <Box className={classes.display}>
+          {
+            control.status === Status.STOP && <Clock />
+          }
+          {
+            control.status === Status.PLAY && (
+              <Box className={classes.face}>
+                {showTime()}
+              </Box>
+            )
+          }
+        </Box>
+        <Box className={classes.control}>
           {
             control.status === Status.STOP && (
               <>
