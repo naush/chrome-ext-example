@@ -2,8 +2,19 @@ import React from 'react';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import Button from '@material-ui/core/Button';
+import WorkOutlineIcon from '@material-ui/icons/WorkOutline';
+import HeadsetOutlinedIcon from '@material-ui/icons/HeadsetOutlined';
+
+import Rating from '@material-ui/lab/Rating';
 
 import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
+
+import { ReactComponent as Tomato } from '../assets/tomato.svg';
+import { ReactComponent as TomatoEmpty } from '../assets/tomato_empty.svg';
+
+import { ReactComponent as Moon } from '../assets/eggplant.svg';
+import { ReactComponent as MoonEmpty } from '../assets/eggplant_empty.svg';
 
 import theme from '../theme';
 
@@ -16,10 +27,67 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  form: {
+    margin: theme.spacing(2, 0, 0),
+  },
+  field: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    margin: theme.spacing(2),
+  },
+  display: {
+    margin: theme.spacing(0, 2, 0),
+    width: theme.spacing(18),
+    justifyContent: 'flex-start',
+  },
+  options: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  icon: {
+    width: theme.spacing(4),
+    height: theme.spacing(4),
+  },
 }));
 
 function Options() {
   const classes = useStyles();
+
+  const load = () => {
+    const saved = localStorage.getItem('pomodoro');
+
+    if (saved) {
+      return JSON.parse(saved);
+    }
+
+    return {
+      work: 25,
+      break: 5,
+    };
+  };
+
+  const [settings, setSettings] = React.useState(load());
+
+  const handleChange = (attribute: string) => (event: any, newValue: any) => {
+    const time = Number(newValue) * 5;
+
+    localStorage.setItem(
+      'pomodoro',
+      JSON.stringify({
+        ...settings,
+        [attribute]: time,
+      }),
+    );
+
+    setSettings({
+      ...settings,
+      [attribute]: time,
+    });
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -28,6 +96,53 @@ function Options() {
         <Typography variant="h1">
           Pomodoro
         </Typography>
+        <Typography variant="h6">
+          How would you like your tomato clock?
+        </Typography>
+        <Box className={classes.form}>
+          <Box className={classes.field}>
+            <Button
+              className={classes.display}
+              variant="outlined"
+              startIcon={<WorkOutlineIcon />}
+            >
+              {settings.work}
+              {' '}
+              minutes
+            </Button>
+            <Rating
+              name="work"
+              defaultValue={settings.work / 5}
+              precision={1}
+              icon={<Tomato className={classes.icon} />}
+              emptyIcon={<TomatoEmpty className={classes.icon} />}
+              size="large"
+              max={9}
+              onChange={handleChange('work')}
+            />
+          </Box>
+          <Box className={classes.field}>
+            <Button
+              className={classes.display}
+              variant="outlined"
+              startIcon={<HeadsetOutlinedIcon />}
+            >
+              {settings.break}
+              {' '}
+              minutes
+            </Button>
+            <Rating
+              name="break"
+              defaultValue={settings.break / 5}
+              precision={1}
+              icon={<Moon className={classes.icon} />}
+              emptyIcon={<MoonEmpty className={classes.icon} />}
+              size="large"
+              max={3}
+              onChange={handleChange('break')}
+            />
+          </Box>
+        </Box>
       </Box>
     </ThemeProvider>
   );
