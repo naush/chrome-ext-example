@@ -17,6 +17,7 @@ import { ReactComponent as Moon } from '../assets/eggplant.svg';
 import { ReactComponent as MoonEmpty } from '../assets/eggplant_empty.svg';
 
 import theme from '../theme';
+import Storage from '../storage';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -57,31 +58,15 @@ const useStyles = makeStyles(() => ({
 function Options() {
   const classes = useStyles();
 
-  const load = () => {
-    const saved = localStorage.getItem('pomodoro');
-
-    if (saved) {
-      return JSON.parse(saved);
-    }
-
-    return {
-      work: 25,
-      break: 5,
-    };
-  };
-
-  const [settings, setSettings] = React.useState(load());
+  const [settings, setSettings] = React.useState(Storage.load());
 
   const handleChange = (attribute: string) => (event: any, newValue: any) => {
     const time = Number(newValue) * 5;
 
-    localStorage.setItem(
-      'pomodoro',
-      JSON.stringify({
-        ...settings,
-        [attribute]: time,
-      }),
-    );
+    Storage.save({
+      ...settings,
+      [attribute]: time,
+    });
 
     setSettings({
       ...settings,

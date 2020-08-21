@@ -2,7 +2,6 @@ import React from 'react';
 
 import AlarmIcon from '@material-ui/icons/Alarm';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import PauseIcon from '@material-ui/icons/Pause';
 import StopIcon from '@material-ui/icons/Stop';
 
 import Box from '@material-ui/core/Box';
@@ -14,6 +13,8 @@ import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import { ReactComponent as Clock } from '../assets/clock.svg';
 
 import theme from '../theme';
+import Storage from '../storage';
+import Status from '../status';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -32,19 +33,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-enum Status {
-  PLAY,
-  STOP,
-}
-
 function Popup() {
   const classes = useStyles();
 
-  const [control, setControl] = React.useState({
-    start: new Date().getTime(),
-    current: new Date().getTime(),
-    status: Status.STOP,
-  });
+  const [control, setControl] = React.useState(Storage.load());
 
   const formatTime = (time: number) => {
     if (time < 10) {
@@ -67,6 +59,11 @@ function Popup() {
 
     if (control.status === Status.PLAY) {
       interval = setInterval(() => {
+        Storage.save({
+          ...control,
+          current: new Date().getTime(),
+        });
+
         setControl({
           ...control,
           current: new Date().getTime(),
@@ -103,6 +100,13 @@ function Popup() {
                   onClick={() => {
                     const now = new Date().getTime();
 
+                    Storage.save({
+                      ...control,
+                      start: now,
+                      current: now,
+                      status: Status.PLAY,
+                    });
+
                     setControl({
                       ...control,
                       start: now,
@@ -129,6 +133,11 @@ function Popup() {
                   variant="outlined"
                   startIcon={<StopIcon />}
                   onClick={() => {
+                    Storage.save({
+                      ...control,
+                      status: Status.STOP,
+                    });
+
                     setControl({
                       ...control,
                       status: Status.STOP,
