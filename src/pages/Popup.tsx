@@ -34,7 +34,6 @@ const useStyles = makeStyles(() => ({
 
 enum Status {
   PLAY,
-  PAUSE,
   STOP,
 }
 
@@ -42,15 +41,58 @@ function Popup() {
   const classes = useStyles();
 
   const [control, setControl] = React.useState({
-    time: 0,
+    start: new Date().getTime(),
+    current: new Date().getTime(),
     status: Status.STOP,
+  });
+
+  const formatTime = (time: number) => {
+    if (time < 10) {
+      return `0${time}`;
+    }
+
+    return time;
+  };
+
+  const showTime = () => {
+    const time = (control.current - control.start) / 1000;
+    const minutes = formatTime(Math.floor(time / 60));
+    const seconds = formatTime(Math.round(time % 60));
+
+    return `${minutes}:${seconds}`;
+  };
+
+  React.useEffect(() => {
+    let interval: any;
+
+    if (control.status === Status.PLAY) {
+      interval = setInterval(() => {
+        setControl({
+          ...control,
+          current: new Date().getTime(),
+        });
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+
+    return () => clearInterval(interval);
   });
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box className={classes.root}>
-        <Clock />
+        {
+          control.status === Status.STOP && <Clock />
+        }
+        {
+          control.status === Status.PLAY && (
+            <Box>
+              {showTime()}
+            </Box>
+          )
+        }
         <Box className={classes.links}>
           {
             control.status === Status.STOP && (
@@ -59,8 +101,12 @@ function Popup() {
                   variant="outlined"
                   startIcon={<AlarmIcon />}
                   onClick={() => {
+                    const now = new Date().getTime();
+
                     setControl({
                       ...control,
+                      start: now,
+                      current: now,
                       status: Status.PLAY,
                     });
                   }}
@@ -81,18 +127,6 @@ function Popup() {
               <>
                 <Button
                   variant="outlined"
-                  startIcon={<PauseIcon />}
-                  onClick={() => {
-                    setControl({
-                      ...control,
-                      status: Status.PAUSE,
-                    });
-                  }}
-                >
-                  Pause
-                </Button>
-                <Button
-                  variant="outlined"
                   startIcon={<StopIcon />}
                   onClick={() => {
                     setControl({
@@ -103,35 +137,11 @@ function Popup() {
                 >
                   Stop
                 </Button>
-              </>
-            )
-          }
-          {
-            control.status === Status.PAUSE && (
-              <>
                 <Button
                   variant="outlined"
-                  startIcon={<PlayArrowIcon />}
-                  onClick={() => {
-                    setControl({
-                      ...control,
-                      status: Status.PLAY,
-                    });
-                  }}
+                  onClick={() => chrome.tabs && chrome.tabs.create({ url: chrome.runtime.getURL('index.html') })}
                 >
-                  Pause
-                </Button>
-                <Button
-                  variant="outlined"
-                  startIcon={<StopIcon />}
-                  onClick={() => {
-                    setControl({
-                      ...control,
-                      status: Status.STOP,
-                    });
-                  }}
-                >
-                  Stop
+                  Options
                 </Button>
               </>
             )

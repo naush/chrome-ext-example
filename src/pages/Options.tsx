@@ -97,9 +97,9 @@ function Options() {
           Pomodoro
         </Typography>
         <Typography variant="h6">
-          How would you like your tomato clock?
+          <span role="img" aria-label="wave">👋</span>
           {' '}
-          <span role="img" aria-label="thinking-face">🤔</span>
+          How would you like your tomato clock?
         </Typography>
         <Box className={classes.form}>
           <Box className={classes.field}>
