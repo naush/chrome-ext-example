@@ -1,15 +1,12 @@
 import React from 'react';
 
-import AlarmIcon from '@material-ui/icons/Alarm';
-import StopIcon from '@material-ui/icons/Stop';
-
 import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
 
 import Display from '../components/Display';
+import Control from '../components/Control';
 
 import theme from '../theme';
 import { Context } from '../store';
@@ -54,20 +51,9 @@ function Popup() {
         const progress = pomodoro.progress();
 
         if (progress >= 100) {
-          dispatch({
-            payload: {
-              ...state,
-              start: current,
-              current,
-            },
-          });
+          dispatch({ payload: { start: current, current } });
         } else {
-          dispatch({
-            payload: {
-              ...state,
-              current,
-            },
-          });
+          dispatch({ payload: { current } });
         }
       }, 1000);
     } else {
@@ -85,79 +71,7 @@ function Popup() {
           <Display />
         </Box>
         <Box className={classes.control}>
-          {
-            state.status === Status.STOP && (
-              <>
-                <Button
-                  variant="outlined"
-                  startIcon={<AlarmIcon />}
-                  onClick={() => {
-                    const now = new Date().getTime();
-
-                    if (chrome.alarms) {
-                      const workTime = now + (state.work * 60 * 1000);
-                      const breakTime = workTime + (state.break * 60 * 1000);
-
-                      chrome.alarms.create('work', {
-                        when: workTime,
-                      });
-
-                      chrome.alarms.create('break', {
-                        when: breakTime,
-                      });
-                    }
-
-                    dispatch({
-                      payload: {
-                        ...state,
-                        start: now,
-                        current: now,
-                        status: Status.PLAY,
-                      },
-                    });
-                  }}
-                >
-                  Start
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={() => chrome.tabs && chrome.tabs.create({ url: chrome.runtime.getURL('index.html') })}
-                >
-                  Options
-                </Button>
-              </>
-            )
-          }
-          {
-            state.status === Status.PLAY && (
-              <>
-                <Button
-                  variant="outlined"
-                  startIcon={<StopIcon />}
-                  onClick={() => {
-                    if (chrome.alarms) {
-                      chrome.alarms.clearAll();
-                    }
-
-                    dispatch({
-                      payload: {
-                        ...state,
-                        status: Status.STOP,
-                      },
-                    });
-                  }}
-                >
-                  Stop
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={() => chrome.tabs && chrome.tabs.create({ url: chrome.runtime.getURL('index.html') })}
-                >
-                  Options
-                </Button>
-              </>
-            )
-          }
+          <Control />
         </Box>
       </Box>
     </ThemeProvider>
