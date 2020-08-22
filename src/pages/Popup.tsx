@@ -3,7 +3,6 @@ import React from 'react';
 import AlarmIcon from '@material-ui/icons/Alarm';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import StopIcon from '@material-ui/icons/Stop';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -11,8 +10,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
 
-import clsx from 'clsx';
-import { ReactComponent as Clock } from '../assets/clock.svg';
+import Display from '../components/Display';
 
 import theme from '../theme';
 import Storage from '../storage';
@@ -93,14 +91,6 @@ function Popup() {
 
   const [control, setControl] = React.useState(Storage.load());
 
-  const formatTime = (time: number) => {
-    if (time < 10) {
-      return `0${time}`;
-    }
-
-    return time;
-  };
-
   const calculateTime = () => (
     (control.current - control.start) / 1000
   );
@@ -111,30 +101,13 @@ function Popup() {
     return (time / total) * 100;
   };
 
-  const workProgress = (control.work / (control.work + control.break)) * 100;
-
-  const isWork = () => (
-    calculateTime() <= control.work * 60
-  );
-
-  const isBreak = () => (
-    !isWork()
-  );
-
-  const showTime = () => {
-    const time = calculateTime();
-    const minutes = formatTime(Math.floor(time / 60));
-    const seconds = formatTime(Math.round(time % 60));
-
-    return `${minutes}:${seconds}`;
-  };
-
   React.useEffect(() => {
     let interval: any;
 
     if (control.status === Status.PLAY) {
       interval = setInterval(() => {
         const current = new Date().getTime();
+
         const progress = calculateProgress();
 
         if (progress >= 100) {
@@ -173,60 +146,9 @@ function Popup() {
       <CssBaseline />
       <Box className={classes.root}>
         <Box className={classes.display}>
-          {
-            control.status === Status.STOP && <Clock className={classes.img} />
-          }
-          {
-            control.status === Status.PLAY && (
-              <Box className={classes.face}>
-                {
-                  isWork() && (
-                    <>
-                      <CircularProgress
-                        className={clsx(classes.progress, classes.track)}
-                        variant="static"
-                        size={200}
-                        value={100}
-                      />
-                      <CircularProgress
-                        className={classes.progress}
-                        variant="static"
-                        size={200}
-                        value={calculateProgress()}
-                      />
-                    </>
-                  )
-                }
-                {
-                  isBreak() && (
-                    <>
-                      <CircularProgress
-                        className={clsx(classes.progress, classes.track)}
-                        variant="static"
-                        size={200}
-                        value={100}
-                      />
-                      <CircularProgress
-                        className={clsx(classes.progress, classes.break)}
-                        variant="static"
-                        size={200}
-                        value={calculateProgress()}
-                      />
-                      <CircularProgress
-                        className={clsx(classes.progress, classes.work)}
-                        variant="static"
-                        size={200}
-                        value={workProgress}
-                      />
-                    </>
-                  )
-                }
-                <Box className={classes.time}>
-                  {showTime()}
-                </Box>
-              </Box>
-            )
-          }
+          <Display
+            control={control as any}
+          />
         </Box>
         <Box className={classes.control}>
           {
