@@ -10,6 +10,7 @@ function reducer(state: any, action: any) {
     ...state,
     ...payload,
   };
+  Local.save(newState);
   return newState;
 }
 
