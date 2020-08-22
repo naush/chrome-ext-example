@@ -84,7 +84,7 @@ function Options() {
         <Typography variant="h6">
           <span role="img" aria-label="wave">👋</span>
           {' '}
-          How would you like your tomato clock?
+          Set up your tomato clock.
         </Typography>
         <Box className={classes.form}>
           <Box className={classes.field}>

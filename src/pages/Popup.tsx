@@ -3,6 +3,7 @@ import React from 'react';
 import AlarmIcon from '@material-ui/icons/Alarm';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import StopIcon from '@material-ui/icons/Stop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -10,11 +11,13 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
 
+import clsx from 'clsx';
 import { ReactComponent as Clock } from '../assets/clock.svg';
 
 import theme from '../theme';
 import Storage from '../storage';
 import Status from '../status';
+
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -33,11 +36,44 @@ const useStyles = makeStyles(() => ({
   face: {
     width: '100%',
     height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: theme.spacing(10),
+    display: 'grid',
+    gridTemplateColumns: '1fr',
+    gridTemplateRows: '1fr',
+    gridColumnGap: 0,
+    gridRowGap: 0,
+  },
+  progress: {
+    gridArea: '1 / 1 / 2 / 2',
+    alignSelf: 'center',
+    justifySelf: 'center',
+  },
+  work: {
+    zIndex: 2,
+
+    '& .MuiCircularProgress-circle': {
+      stroke: theme.palette.primary.main,
+    },
+  },
+  break: {
+    zIndex: 1,
+
+    '& .MuiCircularProgress-circle': {
+      stroke: theme.palette.secondary.main,
+    },
+  },
+  track: {
+    zIndex: 0,
+
+    '& .MuiCircularProgress-circle': {
+      stroke: theme.palette.action.hover,
+    },
+  },
+  time: {
+    zIndex: 1,
+    fontSize: theme.spacing(7),
+    gridArea: '1 / 1 / 2 / 2',
+    alignSelf: 'center',
+    justifySelf: 'center',
   },
   control: {
     display: 'flex',
@@ -61,8 +97,26 @@ function Popup() {
     return time;
   };
 
+  const calculateTime = () => (
+    (control.current - control.start) / 1000
+  );
+
+  const calculateProgress = () => {
+    const time = calculateTime();
+    const total = (control.work + control.break) * 60;
+    return (time / total) * 100;
+  };
+
+  const isWork = () => (
+    calculateTime() <= control.work * 60
+  );
+
+  const isBreak = () => (
+    !isWork()
+  );
+
   const showTime = () => {
-    const time = (control.current - control.start) / 1000;
+    const time = calculateTime();
     const minutes = formatTime(Math.floor(time / 60));
     const seconds = formatTime(Math.round(time % 60));
 
@@ -74,15 +128,32 @@ function Popup() {
 
     if (control.status === Status.PLAY) {
       interval = setInterval(() => {
-        Storage.save({
-          ...control,
-          current: new Date().getTime(),
-        });
+        const current = new Date().getTime();
+        const progress = calculateProgress();
 
-        setControl({
-          ...control,
-          current: new Date().getTime(),
-        });
+        if (progress >= 100) {
+          Storage.save({
+            ...control,
+            start: current,
+            current,
+          });
+
+          setControl({
+            ...control,
+            start: current,
+            current,
+          });
+        } else {
+          Storage.save({
+            ...control,
+            current,
+          });
+
+          setControl({
+            ...control,
+            current,
+          });
+        }
       }, 1000);
     } else {
       clearInterval(interval);
@@ -102,7 +173,51 @@ function Popup() {
           {
             control.status === Status.PLAY && (
               <Box className={classes.face}>
-                {showTime()}
+                {
+                  isWork() && (
+                    <>
+                      <CircularProgress
+                        className={clsx(classes.progress, classes.track)}
+                        variant="static"
+                        size={200}
+                        value={100}
+                      />
+                      <CircularProgress
+                        className={classes.progress}
+                        variant="static"
+                        size={200}
+                        value={calculateProgress()}
+                      />
+                    </>
+                  )
+                }
+                {
+                  isBreak() && (
+                    <>
+                      <CircularProgress
+                        className={clsx(classes.progress, classes.track)}
+                        variant="static"
+                        size={200}
+                        value={100}
+                      />
+                      <CircularProgress
+                        className={clsx(classes.progress, classes.break)}
+                        variant="static"
+                        size={200}
+                        value={calculateProgress()}
+                      />
+                      <CircularProgress
+                        className={clsx(classes.progress, classes.work)}
+                        variant="static"
+                        size={200}
+                        value={(control.work / (control.work + control.break)) * 100}
+                      />
+                    </>
+                  )
+                }
+                <Box className={classes.time}>
+                  {showTime()}
+                </Box>
               </Box>
             )
           }
