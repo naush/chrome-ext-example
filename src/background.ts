@@ -6,6 +6,6 @@ chrome.runtime.onInstalled.addListener((details) => {
   }
 });
 
-chrome.alarms.onAlarm.addListener((alarm) => {
+chrome.alarms.onAlarm.addListener(() => {
   Beep.play(3);
 });
