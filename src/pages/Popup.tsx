@@ -33,6 +33,10 @@ const useStyles = makeStyles(() => ({
     width: 300,
     height: 300,
   },
+  img: {
+    width: '100%',
+    height: '100%',
+  },
   face: {
     width: '100%',
     height: '100%',
@@ -170,7 +174,7 @@ function Popup() {
       <Box className={classes.root}>
         <Box className={classes.display}>
           {
-            control.status === Status.STOP && <Clock />
+            control.status === Status.STOP && <Clock className={classes.img} />
           }
           {
             control.status === Status.PLAY && (
@@ -236,7 +240,7 @@ function Popup() {
 
                     if (chrome.alarms) {
                       const workTime = now + (control.work * 60 * 1000);
-                      const breakTime = now + workTime + (control.break * 60 * 1000);
+                      const breakTime = workTime + (control.break * 60 * 1000);
 
                       chrome.alarms.create('work', {
                         when: workTime,

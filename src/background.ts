@@ -7,7 +7,5 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {
-  console.log('alarm', alarm);
-  // run when an alarm goes off
   Beep.play(3);
 });
