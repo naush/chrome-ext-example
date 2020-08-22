@@ -10,6 +10,7 @@ import Rating from '@material-ui/lab/Rating';
 
 import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
 
+import clsx from 'clsx';
 import { ReactComponent as Tomato } from '../assets/tomato.svg';
 import { ReactComponent as TomatoEmpty } from '../assets/tomato_empty.svg';
 
@@ -18,6 +19,7 @@ import { ReactComponent as MoonEmpty } from '../assets/eggplant_empty.svg';
 
 import theme from '../theme';
 import { Context } from '../store';
+
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -46,11 +48,13 @@ const useStyles = makeStyles(() => ({
     width: theme.spacing(18),
     justifyContent: 'flex-start',
   },
-  options: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+  work: {
+    color: theme.palette.background.paper,
+    backgroundColor: theme.palette.primary.main,
+  },
+  break: {
+    color: theme.palette.background.paper,
+    backgroundColor: theme.palette.secondary.main,
   },
   icon: {
     width: theme.spacing(4),
@@ -82,16 +86,16 @@ function Options() {
         </Typography>
         <Typography
           className={classes.subheader}
-          variant="h6"
+          variant="h5"
         >
           <span role="img" aria-label="wave">👋</span>
           {' '}
-          Set up your favorite tomato clock here.
+          Set up your favorite kitchen timer here
         </Typography>
         <Box className={classes.form}>
           <Box className={classes.field}>
             <Button
-              className={classes.display}
+              className={clsx(classes.display, classes.work)}
               variant="outlined"
               startIcon={<WorkOutlineIcon />}
             >
@@ -112,7 +116,7 @@ function Options() {
           </Box>
           <Box className={classes.field}>
             <Button
-              className={classes.display}
+              className={clsx(classes.display, classes.break)}
               variant="outlined"
               startIcon={<HeadsetOutlinedIcon />}
             >
