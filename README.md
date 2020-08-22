@@ -38,3 +38,4 @@ Creates a zip file `extension.zip` from the `build` folder.
 
 - Icons made by [Icongeek26](https://www.flaticon.com/authors/icongeek26) from [www.flaticon.com](www.flaticon.com)
 - [Example of playing audio in Javascript](https://gist.github.com/xem/670dec8e70815842eb95)
+- [Beep Sound](http://soundbible.com/1251-Beep.html) recorded by Mike Koenig

@@ -24,5 +24,5 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     });
   }
 
-  Beep.play(3);
+  Beep.play(2);
 });

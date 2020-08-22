@@ -33,6 +33,7 @@
     "import/extensions": "off",
     "no-param-reassign": "off",
     "no-unused-vars": "warn",
+    "no-unused-expressions": "off",
     "no-console": "off"
   }
 }

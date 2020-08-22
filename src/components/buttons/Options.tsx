@@ -5,7 +5,11 @@ import Button from '@material-ui/core/Button';
 const Options = () => (
   <Button
     variant="outlined"
-    onClick={() => chrome.tabs && chrome.tabs.create({ url: chrome.runtime.getURL('index.html') })}
+    onClick={() => {
+      if (chrome.runtime.openOptionsPage) {
+        chrome.runtime.openOptionsPage();
+      }
+    }}
   >
     Options
   </Button>
