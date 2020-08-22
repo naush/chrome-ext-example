@@ -60,7 +60,7 @@ const useStyles = makeStyles(() => ({
 
 function Options() {
   const classes = useStyles();
-  const MINUTES_PER_TOMATO = 1;
+  const MINUTES_PER_TOMATO = 5;
 
   const [settings, setSettings] = React.useState(Storage.load());
 
