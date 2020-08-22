@@ -68,7 +68,6 @@ function Options() {
 
     dispatch({
       payload: {
-        ...state,
         [attribute]: time,
       },
     });
@@ -87,7 +86,7 @@ function Options() {
         >
           <span role="img" aria-label="wave">👋</span>
           {' '}
-          Set up your tomato clock here.
+          Set up your favorite tomato clock here.
         </Typography>
         <Box className={classes.form}>
           <Box className={classes.field}>
