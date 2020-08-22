@@ -11,7 +11,3 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   // run when an alarm goes off
   Beep.play(3);
 });
-
-chrome.notifications.onButtonClicked.addListener(() => {
-  // run when a notification is fired
-});
