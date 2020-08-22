@@ -10,8 +10,8 @@
   },
   "options_page": "index.html",
   "permissions": [
-    "alarms",
-    "notifications"
+    "storage",
+    "alarms"
   ],
   "background": {
     "page": "background.html",

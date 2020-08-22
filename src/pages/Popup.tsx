@@ -79,7 +79,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: theme.spacing(0, 4),
+    padding: theme.spacing(0, 5),
     width: '100%',
   },
 }));
@@ -234,6 +234,19 @@ function Popup() {
                   onClick={() => {
                     const now = new Date().getTime();
 
+                    if (chrome.alarms) {
+                      const workTime = now + (control.work * 60 * 1000);
+                      const breakTime = now + workTime + (control.break * 60 * 1000);
+
+                      chrome.alarms.create('work', {
+                        when: workTime,
+                      });
+
+                      chrome.alarms.create('break', {
+                        when: breakTime,
+                      });
+                    }
+
                     Storage.save({
                       ...control,
                       start: now,
@@ -267,6 +280,10 @@ function Popup() {
                   variant="outlined"
                   startIcon={<StopIcon />}
                   onClick={() => {
+                    if (chrome.alarms) {
+                      chrome.alarms.clearAll();
+                    }
+
                     Storage.save({
                       ...control,
                       status: Status.STOP,
