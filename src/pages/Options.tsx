@@ -29,7 +29,10 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center',
   },
   form: {
-    margin: theme.spacing(2, 0, 0),
+    margin: theme.spacing(0),
+  },
+  subheader: {
+    margin: theme.spacing(0, 0, 2),
   },
   field: {
     display: 'flex',
@@ -82,7 +85,10 @@ function Options() {
         <Typography variant="h1">
           Pomodoro
         </Typography>
-        <Typography variant="h6">
+        <Typography
+          className={classes.subheader}
+          variant="h6"
+        >
           <span role="img" aria-label="wave">👋</span>
           {' '}
           Set up your tomato clock here.
