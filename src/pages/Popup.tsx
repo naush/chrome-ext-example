@@ -107,6 +107,8 @@ function Popup() {
     return (time / total) * 100;
   };
 
+  const workProgress = (control.work / (control.work + control.break)) * 100;
+
   const isWork = () => (
     calculateTime() <= control.work * 60
   );
@@ -210,7 +212,7 @@ function Popup() {
                         className={clsx(classes.progress, classes.work)}
                         variant="static"
                         size={200}
-                        value={(control.work / (control.work + control.break)) * 100}
+                        value={workProgress}
                       />
                     </>
                   )

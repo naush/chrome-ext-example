@@ -57,11 +57,12 @@ const useStyles = makeStyles(() => ({
 
 function Options() {
   const classes = useStyles();
+  const MINUTES_PER_TOMATO = 1;
 
   const [settings, setSettings] = React.useState(Storage.load());
 
   const handleChange = (attribute: string) => (event: any, newValue: any) => {
-    const time = Number(newValue) * 5;
+    const time = Number(newValue) * MINUTES_PER_TOMATO;
 
     Storage.save({
       ...settings,
@@ -84,7 +85,7 @@ function Options() {
         <Typography variant="h6">
           <span role="img" aria-label="wave">👋</span>
           {' '}
-          Set up your tomato clock.
+          Set up your tomato clock here.
         </Typography>
         <Box className={classes.form}>
           <Box className={classes.field}>
@@ -99,7 +100,7 @@ function Options() {
             </Button>
             <Rating
               name="work"
-              defaultValue={settings.work / 5}
+              defaultValue={settings.work / MINUTES_PER_TOMATO}
               precision={1}
               icon={<Tomato className={classes.icon} />}
               emptyIcon={<TomatoEmpty className={classes.icon} />}
@@ -120,7 +121,7 @@ function Options() {
             </Button>
             <Rating
               name="break"
-              defaultValue={settings.break / 5}
+              defaultValue={settings.break / MINUTES_PER_TOMATO}
               precision={1}
               icon={<Moon className={classes.icon} />}
               emptyIcon={<MoonEmpty className={classes.icon} />}
