@@ -1,6 +1,6 @@
 import Status from './status';
 
-class Storage {
+class Local {
   static defaults() {
     return {
       work: 25,
@@ -29,4 +29,4 @@ class Storage {
   }
 }
 
-export default Storage;
+export default Local;

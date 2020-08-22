@@ -1,7 +1,6 @@
 import React from 'react';
 
 import AlarmIcon from '@material-ui/icons/Alarm';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import StopIcon from '@material-ui/icons/Stop';
 
 import Box from '@material-ui/core/Box';
@@ -13,8 +12,9 @@ import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import Display from '../components/Display';
 
 import theme from '../theme';
-import Storage from '../storage';
+import { Context } from '../store';
 import Status from '../status';
+import Pomodoro from '../pomodoro';
 
 
 const useStyles = makeStyles(() => ({
@@ -31,52 +31,6 @@ const useStyles = makeStyles(() => ({
     width: 300,
     height: 300,
   },
-  img: {
-    width: '100%',
-    height: '100%',
-  },
-  face: {
-    width: '100%',
-    height: '100%',
-    display: 'grid',
-    gridTemplateColumns: '1fr',
-    gridTemplateRows: '1fr',
-    gridColumnGap: 0,
-    gridRowGap: 0,
-  },
-  progress: {
-    gridArea: '1 / 1 / 2 / 2',
-    alignSelf: 'center',
-    justifySelf: 'center',
-  },
-  work: {
-    zIndex: 2,
-
-    '& .MuiCircularProgress-circle': {
-      stroke: theme.palette.primary.main,
-    },
-  },
-  break: {
-    zIndex: 1,
-
-    '& .MuiCircularProgress-circle': {
-      stroke: theme.palette.secondary.main,
-    },
-  },
-  track: {
-    zIndex: 0,
-
-    '& .MuiCircularProgress-circle': {
-      stroke: theme.palette.action.hover,
-    },
-  },
-  time: {
-    zIndex: 1,
-    fontSize: theme.spacing(7),
-    gridArea: '1 / 1 / 2 / 2',
-    alignSelf: 'center',
-    justifySelf: 'center',
-  },
   control: {
     display: 'flex',
     flexDirection: 'row',
@@ -88,49 +42,31 @@ const useStyles = makeStyles(() => ({
 
 function Popup() {
   const classes = useStyles();
-
-  const [control, setControl] = React.useState(Storage.load());
-
-  const calculateTime = () => (
-    (control.current - control.start) / 1000
-  );
-
-  const calculateProgress = () => {
-    const time = calculateTime();
-    const total = (control.work + control.break) * 60;
-    return (time / total) * 100;
-  };
+  const { state, dispatch } = React.useContext(Context) as any;
+  const pomodoro = new Pomodoro(state);
 
   React.useEffect(() => {
     let interval: any;
 
-    if (control.status === Status.PLAY) {
+    if (state.status === Status.PLAY) {
       interval = setInterval(() => {
         const current = new Date().getTime();
-
-        const progress = calculateProgress();
+        const progress = pomodoro.progress();
 
         if (progress >= 100) {
-          Storage.save({
-            ...control,
-            start: current,
-            current,
-          });
-
-          setControl({
-            ...control,
-            start: current,
-            current,
+          dispatch({
+            payload: {
+              ...state,
+              start: current,
+              current,
+            },
           });
         } else {
-          Storage.save({
-            ...control,
-            current,
-          });
-
-          setControl({
-            ...control,
-            current,
+          dispatch({
+            payload: {
+              ...state,
+              current,
+            },
           });
         }
       }, 1000);
@@ -146,13 +82,11 @@ function Popup() {
       <CssBaseline />
       <Box className={classes.root}>
         <Box className={classes.display}>
-          <Display
-            control={control as any}
-          />
+          <Display />
         </Box>
         <Box className={classes.control}>
           {
-            control.status === Status.STOP && (
+            state.status === Status.STOP && (
               <>
                 <Button
                   variant="outlined"
@@ -161,8 +95,8 @@ function Popup() {
                     const now = new Date().getTime();
 
                     if (chrome.alarms) {
-                      const workTime = now + (control.work * 60 * 1000);
-                      const breakTime = workTime + (control.break * 60 * 1000);
+                      const workTime = now + (state.work * 60 * 1000);
+                      const breakTime = workTime + (state.break * 60 * 1000);
 
                       chrome.alarms.create('work', {
                         when: workTime,
@@ -173,18 +107,13 @@ function Popup() {
                       });
                     }
 
-                    Storage.save({
-                      ...control,
-                      start: now,
-                      current: now,
-                      status: Status.PLAY,
-                    });
-
-                    setControl({
-                      ...control,
-                      start: now,
-                      current: now,
-                      status: Status.PLAY,
+                    dispatch({
+                      payload: {
+                        ...state,
+                        start: now,
+                        current: now,
+                        status: Status.PLAY,
+                      },
                     });
                   }}
                 >
@@ -200,7 +129,7 @@ function Popup() {
             )
           }
           {
-            control.status === Status.PLAY && (
+            state.status === Status.PLAY && (
               <>
                 <Button
                   variant="outlined"
@@ -210,14 +139,11 @@ function Popup() {
                       chrome.alarms.clearAll();
                     }
 
-                    Storage.save({
-                      ...control,
-                      status: Status.STOP,
-                    });
-
-                    setControl({
-                      ...control,
-                      status: Status.STOP,
+                    dispatch({
+                      payload: {
+                        ...state,
+                        status: Status.STOP,
+                      },
                     });
                   }}
                 >

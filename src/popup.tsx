@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Popup from './pages/Popup';
+import { StoreProvider } from './store';
 import * as serviceWorker from './serviceWorker';
 import 'typeface-roboto';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Popup />
+    <StoreProvider>
+      <Popup />
+    </StoreProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

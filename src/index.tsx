@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Options from './pages/Options';
+import { StoreProvider } from './store';
 import * as serviceWorker from './serviceWorker';
 import 'typeface-roboto';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Options />
+    <StoreProvider>
+      <Options />
+    </StoreProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

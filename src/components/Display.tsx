@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
 import { ReactComponent as Clock } from '../assets/clock.svg';
+import { Context } from '../store';
 import Status from '../status';
 import Pomodoro from '../pomodoro';
 
@@ -58,18 +59,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type DisplayProps = {
-  control: any;
-};
-
-const Display = ({
-  control,
-}: DisplayProps) => {
+const Display = () => {
   const classes = useStyles();
-  const pomodoro = new Pomodoro(control);
-  const workProgress = (control.work / (control.work + control.break)) * 100;
+  const { state } = React.useContext(Context) as any;
+  const pomodoro = new Pomodoro(state);
+  const workProgress = (state.work / (state.work + state.break)) * 100;
 
-  if (control.status === Status.STOP) {
+  if (state.status === Status.STOP) {
     return <Clock className={classes.img} />;
   }
 

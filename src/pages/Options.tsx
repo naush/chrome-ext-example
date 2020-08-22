@@ -17,7 +17,7 @@ import { ReactComponent as Moon } from '../assets/eggplant.svg';
 import { ReactComponent as MoonEmpty } from '../assets/eggplant_empty.svg';
 
 import theme from '../theme';
-import Storage from '../storage';
+import { Context } from '../store';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -61,20 +61,16 @@ const useStyles = makeStyles(() => ({
 function Options() {
   const classes = useStyles();
   const MINUTES_PER_TOMATO = 5;
-
-  const [settings, setSettings] = React.useState(Storage.load());
+  const { state, dispatch } = React.useContext(Context) as any;
 
   const handleChange = (attribute: string) => (event: any, newValue: any) => {
     const time = Number(newValue) * MINUTES_PER_TOMATO;
 
-    Storage.save({
-      ...settings,
-      [attribute]: time,
-    });
-
-    setSettings({
-      ...settings,
-      [attribute]: time,
+    dispatch({
+      payload: {
+        ...state,
+        [attribute]: time,
+      },
     });
   };
 
@@ -100,13 +96,13 @@ function Options() {
               variant="outlined"
               startIcon={<WorkOutlineIcon />}
             >
-              {settings.work}
+              {state.work}
               {' '}
               minutes
             </Button>
             <Rating
               name="work"
-              defaultValue={settings.work / MINUTES_PER_TOMATO}
+              defaultValue={state.work / MINUTES_PER_TOMATO}
               precision={1}
               icon={<Tomato className={classes.icon} />}
               emptyIcon={<TomatoEmpty className={classes.icon} />}
@@ -121,13 +117,13 @@ function Options() {
               variant="outlined"
               startIcon={<HeadsetOutlinedIcon />}
             >
-              {settings.break}
+              {state.break}
               {' '}
               minutes
             </Button>
             <Rating
               name="break"
-              defaultValue={settings.break / MINUTES_PER_TOMATO}
+              defaultValue={state.break / MINUTES_PER_TOMATO}
               precision={1}
               icon={<Moon className={classes.icon} />}
               emptyIcon={<MoonEmpty className={classes.icon} />}
